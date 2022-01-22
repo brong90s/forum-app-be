@@ -1,11 +1,6 @@
-## A2A Internal Project Training
+## Self learning project
 
-- Mobile App Backend APIs
 - Forum App
-
-## Description
-
-In this project Repo is used for build the mobile FORUM app APIs (A2A Internal Project Training).
 
 ## Installation
 
