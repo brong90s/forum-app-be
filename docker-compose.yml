@@ -1,0 +1,40 @@
+version: '3.8'
+
+# Docker Networks
+networks:
+  mobile-forum-app-network-dev:
+    driver: bridge
+
+services:
+  ##### DATABASE #####
+  postgres:
+    image: postgres:14.1-alpine
+    container_name: mobile-forum-app-postgres-dev
+    env_file: .env
+    volumes:
+      - postgres_data-dev:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
+    networks:
+      - mobile-forum-app-network-dev
+    restart: always
+
+  ##### pgAdmin #####
+  pgadmin:
+    image: dpage/pgadmin4:6.4
+    container_name: mobile-forum-app-pgadmin-dev
+    env_file: .env
+    depends_on:
+      - postgres
+    ports:
+      - 8080:80
+    volumes:
+      - pgadmin_data-dev:/var/lib/pgAdmin
+    networks:
+      - mobile-forum-app-network-dev
+    restart: always
+
+# Declare Volume Data
+volumes:
+  postgres_data-dev:
+  pgadmin_data-dev:

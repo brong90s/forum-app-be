@@ -1,0 +1,58 @@
+version: '3.8'
+
+# Docker Networks
+networks:
+  mobile-forum-app-network-prod:
+    driver: bridge
+
+services:
+  ##### BUILD APP #####
+  mobile-forum-api:
+    env_file:
+      - .env
+    image: mobile-forum
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: production
+    container_name: mobile-forum-api
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    command: ['sh', 'scripts/start-api.sh']
+    networks:
+      - mobile-forum-app-network-prod
+    depends_on:
+      - postgres
+
+  ##### DATABASE #####
+  postgres:
+    image: postgres:14.1-alpine
+    container_name: mobile-forum-app-postgres-prod
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file: .env
+    ports:
+      - '5433:5432'
+    networks:
+      - mobile-forum-app-network-prod
+    restart: always
+
+  ##### pgAdmin #####
+  pgadmin:
+    image: dpage/pgadmin4:6.4
+    container_name: mobile-forum-app-pgadmin-prod
+    env_file: .env
+    depends_on:
+      - postgres
+    ports:
+      - 8080:80
+    volumes:
+      - pgadmin_data:/var/lib/pgAdmin
+    networks:
+      - mobile-forum-app-network-prod
+    restart: always
+
+# Declare Volume Data
+volumes:
+  postgres_data:
+  pgadmin_data:
